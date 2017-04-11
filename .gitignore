@@ -1,0 +1,10 @@
+# Ignore npm files
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore generated files
+/lib
+
+
+

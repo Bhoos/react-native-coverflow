@@ -1,0 +1,42 @@
+{
+  "name": "react-native-coverflow",
+  "version": "0.0.0",
+  "description": "Coverflow component for React Native",
+  "main": "lib/Coverflow.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "babel --out-dir lib --ignore __tests__ src --source-maps",
+    "clean": "rimraf lib && mkdir lib",
+    "prepublish": "rimraf lib && babel --out-dir lib --ignore __tests__ src",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bhoos/react-native-coverflow.git"
+  },
+  "author": "Ranjan Shrestha",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bhoos/react-native-coverflow/issues"
+  },
+  "homepage": "https://github.com/Bhoos/react-native-coverflow#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.1",
+    "babel-jest": "^19.0.0",
+    "babel-preset-react-native": "^1.9.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.3",
+    "jest": "^19.0.2",
+    "rimraf": "^2.6.1"
+  },
+  "peerDependencies": {
+    "react": ">=15.0.0 <16.0.0",
+    "react-native": ">=40.0.0 < 1.0.0"
+  }
+}
