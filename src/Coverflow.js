@@ -99,7 +99,7 @@ class Coverflow extends Component {
           const velocity = -Math.sign(gestureState.vx)
                   * (clamp(Math.abs(gestureState.vx), 3, 5) / sensitivity);
           const deceleration = this.props.deceleration;
-          console.log('Decaying with', velocity, deceleration);
+
           Animated.decay(scrollX, {
             velocity,
             deceleration,
