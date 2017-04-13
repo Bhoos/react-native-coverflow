@@ -26,9 +26,15 @@ class YourComponent extends Component {
   }
 }
 ```
-Checkout the Expo demo from the following link
-> https://exp.host/@syaau/coverflow-demo  
-![Expo QR Code](./docs/qrcode.png)
+
+**Checkout the demo project**
+> `$ git clone git@github.com:Bhoos/coverflow-demo.git`  
+> `$ cd coverflow-demo`  
+> `$ npm install`  
+
+Run demo on iOS or Android
+> `$ react-native run-ios`  
+> `$ react-native run-android`
 
 ## Props
 ### onChange :callback(index)
