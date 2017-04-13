@@ -1,6 +1,6 @@
 {
   "name": "react-native-coverflow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Coverflow component for React Native",
   "main": "lib/Coverflow.js",
   "files": [
@@ -38,6 +38,6 @@
   },
   "peerDependencies": {
     "react": ">=15.0.0 <16.0.0",
-    "react-native": ">=40.0.0 < 1.0.0"
+    "react-native": ">=40.0.0 <1.0.0"
   }
 }
