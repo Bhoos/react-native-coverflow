@@ -1,9 +1,10 @@
 {
   "name": "react-native-coverflow",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Coverflow component for React Native",
   "main": "lib/Coverflow.js",
   "files": [
+    "docs",
     "lib"
   ],
   "scripts": {
