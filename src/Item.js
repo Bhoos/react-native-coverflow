@@ -1,5 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import { Animated, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 class Item extends Component {
   static propTypes = {
@@ -40,7 +52,6 @@ class Item extends Component {
   }
 
   render() {
-    console.log('Rendering Item', this.props.position);
     const {
       scroll,
       position,
@@ -71,29 +82,32 @@ class Item extends Component {
         },
         {
           rotateY: scroll.interpolate({
-            inputRange: [position - 2, position - 1, position - 0.5, position, position + 0.5, position + 1, position + 2],
-            outputRange: [`-${rotation}deg`, `-${rotation}deg`, `-${midRotation}deg`, '0deg', `${midRotation}deg`, `${rotation}deg`, `${rotation}deg`],
+            inputRange: [
+              position - 2,
+              position - 1,
+              position - 0.5,
+              position,
+              position + 0.5,
+              position + 1,
+              position + 2,
+            ],
+            outputRange: [
+              `-${rotation}deg`,
+              `-${rotation}deg`,
+              `-${midRotation}deg`,
+              '0deg',
+              `${midRotation}deg`,
+              `${rotation}deg`,
+              `${rotation}deg`,
+            ],
           }),
         },
       ],
     };
 
     return (
-      <View
-        pointerEvents="box-none"
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          right: 0,
-          bottom: 0,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => onSelect(position)}
-        >
+      <View pointerEvents="box-none" style={styles.container}>
+        <TouchableWithoutFeedback onPress={() => onSelect(position)}>
           <Animated.View style={style}>
             {this.props.children}
           </Animated.View>
