@@ -29,6 +29,10 @@ class Item extends Component {
     };
   }
 
+  shouldComponentUpdate(nextProps) {
+    return false;
+  }
+
   render() {
     const {
       scroll,
@@ -75,7 +79,7 @@ class Item extends Component {
     };
 
     return (
-      <Animated.View
+      <View
         pointerEvents="box-none"
         style={{
           position: 'absolute',
@@ -96,7 +100,7 @@ class Item extends Component {
             {this.props.children}
           </Animated.View>
         </TouchableWithoutFeedback>
-      </Animated.View>
+      </View>
     );
   }
 }
