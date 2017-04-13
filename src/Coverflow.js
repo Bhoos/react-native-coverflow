@@ -1,37 +1,18 @@
 import React, { Component, PropTypes, Children } from 'react';
-import { Animated, View, PanResponder, StyleSheet, Platform } from 'react-native';
+import { Animated, View, PanResponder, StyleSheet } from 'react-native';
+
+import {
+  SENSITIVITY_LOW,
+  SENSITIVITY_NORMAL,
+  SENSITIVITY_HIGH,
+  DECELERATION_NORMAL,
+  DECELERATION_FAST,
+} from './constants';
 
 import Item from './Item';
-
-const SENSITIVITY_LOW = 'low';
-const SENSITIVITY_HIGH = 'high';
-const SENSITIVITY_NORMAL = 'normal';
-
-function convertSensitivity(sensitivity) {
-  switch (sensitivity) {
-    case SENSITIVITY_LOW:
-      return 120;
-    case SENSITIVITY_HIGH:
-      return 40;
-    case SENSITIVITY_NORMAL:
-    default:
-      return 60;
-  }
-}
-
-function mapPropsToState(props, { width, selection }) {
-  const sel = selection || 0;
-  return {
-    pageWidth: convertSensitivity(props.sensitivity),
-    children: fixOrder(Children.toArray(props.children), sel),
-    width,
-  };
-}
-
-function getAnimatedValue(v) {
-  // eslint-disable-next-line no-underscore-dangle
-  return v.__getValue();
-}
+import clamp from './clamp';
+import fixChildrenOrder from './fixChildrenOrder';
+import convertSensitivity from './convertSensitivity';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,38 +21,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function clamp(value, min, max) {
-  if (value < min) {
-    return min;
-  }
-
-  if (value > max) {
-    return max;
-  }
-
-  return value;
-}
-
-function fixOrder(items, selection) {
-  // Fix the order of children
-  const children = [];
-  for (let i = 0; i < selection; i += 1) {
-    children.push([i, items[i]]);
-  }
-
-  for (let i = items.length - 1; i > selection; i -= 1) {
-    children.push([i, items[i]]);
-  }
-
-  children.push([selection, items[selection]]);
-
-  return children;
-}
-
 class Coverflow extends Component {
   static propTypes = {
     style: View.propTypes.style,
     sensitivity: PropTypes.oneOf([SENSITIVITY_LOW, SENSITIVITY_NORMAL, SENSITIVITY_HIGH]),
+    deceleration: PropTypes.oneOf([DECELERATION_NORMAL, DECELERATION_FAST]),
     initialSelection: PropTypes.number,
     spacing: PropTypes.number,
     wingSpan: PropTypes.number,
@@ -81,6 +35,7 @@ class Coverflow extends Component {
     scaleDown: PropTypes.number,
     scaleFurther: PropTypes.number,
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
+    onPress: PropTypes.func,
     onChange: PropTypes.func.isRequired,
   };
 
@@ -88,130 +43,144 @@ class Coverflow extends Component {
     initialSelection: 0,
     style: undefined,
     sensitivity: SENSITIVITY_NORMAL,
+    deceleration: DECELERATION_NORMAL,
     spacing: 100,
-    wingSpan: 300,
+    wingSpan: 80,
     rotation: 50,
     midRotation: 50,
     perspective: 800,
     scaleDown: 0.8,
     scaleFurther: 0.75,
+    onPress: undefined,
   };
 
   constructor(props) {
     super(props);
 
+    const sensitivity = convertSensitivity(props.sensitivity);
+    this.scrollPos = props.initialSelection;
+    const scrollX = new Animated.Value(props.initialSelection);
     this.state = {
       width: 0,
-      scrollX: new Animated.Value(0),
+      sensitivity,
+      scrollX,
       selection: props.initialSelection,
-      children: fixOrder(Children.toArray(props.children), props.initialSelection),
+      children: fixChildrenOrder(props, props.initialSelection),
     };
   }
 
   componentWillMount() {
-    let offset = 0;
+    const { scrollX, sensitivity } = this.state;
+    this.scrollListener = scrollX.addListener(this.onScroll);
+
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (evt, gestureState) => (
         // Since we want to handle presses on individual items as well
         // Only start the pan responder when there is some movement
-        Math.abs(gestureState.dx) > 15
+        Math.abs(gestureState.dx) > 10
       ),
       onPanResponderGrant: () => {
-        offset = getAnimatedValue(this.state.scrollX);
+        scrollX.extractOffset();
       },
       onPanResponderTerminationRequest: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        // change the scroll value with the drag event
-        const { pageWidth, scrollX } = this.state;
-        scrollX.setValue(offset - (gestureState.dx / pageWidth));
-        console.log('Velocity', gestureState.vx, gestureState.dx);
+        scrollX.setValue(-(gestureState.dx / sensitivity));
+        // scrollX.setValue(offset - (gestureState.dx / sensitivity));
       },
       onPanResponderRelease: (evt, gestureState) => {
-        const { pageWidth, scrollX } = this.state;
+        scrollX.flattenOffset();
+
         const count = Children.count(this.props.children);
-        // console.log('Release Velocity', gestureState.vx, gestureState.dx);
-        // const velocity = Math.abs(gestureState.vx);
-        // const deceleration = 0.5;
+        const selection = Math.round(this.scrollPos);
 
-
-        // const { pageWidth, scrollX } = this.state;
-        // // TODO: Calculate displacement based on velocity
-        // const time = velocity / deceleration;
-        // console.log('Calculated Time', time);
-        // const displacement = Math.sign(gestureState.vx) * ((velocity * time) - ((deceleration * time * time) / 2));
-        // console.log('Additional Displacement', displacement, 'from', scrollX.__getValue());
-        // const finalPos = Math.min(count - 1,
-        //   Math.max(0,
-        //     Math.round(scrollX.__getValue() - (displacement))));
-        // console.log('Final Position', finalPos);
-        // const s = scrollX.__getValue() - finalPos;
-        // const a = (velocity * velocity) / (2 * s);
-        // console.log('Effective Deceleration', a);
-        // const t = Math.abs(velocity / a);
-        // console.log('Using time', t);
-
-        const pageVelocity = gestureState.vx / pageWidth;
-        if (scrollX.__getValue() > 0 && scrollX.__getValue() < count && Math.abs(pageVelocity) > (1 / pageWidth)) {
-          const velocity = Math.sign(gestureState.vx) * clamp(Math.abs(pageVelocity), 1 / pageWidth, 5 / pageWidth);
-          console.log('Velocity', velocity);
+        // Damp out the scroll with certain deceleration
+        if (selection > 0 && selection < count - 2 && Math.abs(gestureState.vx) > 1) {
+          const velocity = -Math.sign(gestureState.vx)
+                  * (clamp(Math.abs(gestureState.vx), 3, 5) / sensitivity);
+          const deceleration = this.props.deceleration;
+          console.log('Decaying with', velocity, deceleration);
           Animated.decay(scrollX, {
-            velocity: -velocity,
-            deceleration: 0.99,
-          }).start(() => {
-            console.log('Decay complete');
-            const pos = clamp(Math.round(scrollX.__getValue()), 0, count - 1);
-            Animated.spring(scrollX, {
-              toValue: pos,
-            }).start();
+            velocity,
+            deceleration,
+          }).start(({ finished }) => {
+            // Only snap to finish if the animation was completed gracefully
+            if (finished) {
+              this.snapToPosition();
+            }
           });
         } else {
-          const pos = clamp(Math.round(scrollX.__getValue()), 0, count - 1);
-          Animated.spring(scrollX, {
-            toValue: pos,
-          }).start();
+          this.snapToPosition();
         }
-
-        // // Snap to an item
-        // Animated.spring(scrollX, {
-        //   toValue: finalPos,
-        // }).start();
       },
     });
-
-    this.listenerId = this.state.scrollX.addListener(this.fixChildOrder);
   }
 
-  fixChildOrder = ({ value }) => {
-    const { children } = this.props;
+  componentWillReceiveProps(nextProps) {
+    // Check if the children property changes on addition / removal
+    const sensitivity = convertSensitivity(nextProps.sensitivity);
+    const selection = clamp(this.state.selection, 0, Children.count(nextProps.children) - 1);
+    const children = fixChildrenOrder(nextProps, selection);
 
-    const newSelection = clamp(Math.round(value), 0, Children.count(children) - 1);
-    if (newSelection !== this.state.selection) {
-      this.setState({
-        selection: newSelection,
-        children: fixOrder(Children.toArray(this.props.children), newSelection),
-      });
+    if (this.state.selection !== selection) {
+      this.state.scrollX.setValue(selection);
     }
+
+    this.setState({
+      selection,
+      sensitivity,
+      children,
+    });
   }
 
   componentWillUnmount() {
     this.state.scrollX.removeListener(this.listenerId);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState(mapPropsToState(nextProps, this.state));
+  onScroll = ({ value }) => {
+    // Update the most recent value
+    this.scrollPos = value;
+
+    const count = this.state.children.length;
+
+    const newSelection = clamp(Math.round(value), 0, count - 1);
+    if (newSelection !== this.state.selection) {
+      this.setState({
+        selection: newSelection,
+        children: fixChildrenOrder(this.props, newSelection),
+      });
+    }
   }
 
   onLayout = ({ nativeEvent }) => {
-    const state = mapPropsToState(this.props, { width: nativeEvent.layout.width });
-    this.setState(state);
+    this.setState({
+      width: nativeEvent.layout.width,
+    });
   }
 
-  select = (idx) => {
-    const { scrollX } = this.state;
-    Animated.spring(scrollX, {
-      toValue: idx,
-    }).start();
+  onSelect = (idx) => {
+    // Check if the current selection is "exactly" the same
+    if (idx === Math.round(this.scrollPos)) {
+      if (this.props.onPress) {
+        this.props.onPress(idx);
+      }
+    } else {
+      this.snapToPosition(idx);
+    }
+  }
+
+  snapToPosition = (pos = this.scrollPos) => {
+    const { scrollX, children } = this.state;
+    const count = children.length;
+
+    const finalPos = clamp(Math.round(pos), 0, count - 1);
+    if (finalPos !== this.scrollPos) {
+      this.props.onChange(finalPos);
+
+      Animated.spring(scrollX, {
+        toValue: finalPos,
+      }).start();
+    }
   }
 
   renderItem = ([position, item]) => {
@@ -220,7 +189,16 @@ class Coverflow extends Component {
     }
 
     const { scrollX } = this.state;
-    const { rotation, midRotation, perspective, children, scaleDown, scaleFurther, spacing, wingSpan } = this.props;
+    const {
+      rotation,
+      midRotation,
+      perspective,
+      children,
+      scaleDown,
+      scaleFurther,
+      spacing,
+      wingSpan,
+    } = this.props;
     const count = Children.count(children);
 
     return (
@@ -236,7 +214,7 @@ class Coverflow extends Component {
         perspective={perspective}
         scaleDown={scaleDown}
         scaleFurther={scaleFurther}
-        onSelect={this.select}
+        onSelect={this.onSelect}
       >
         {item}
       </Item>
@@ -256,7 +234,7 @@ class Coverflow extends Component {
       ...props
     } = this.props;
     const { children } = this.state;
-    console.log('Rendering children', children.length);
+
     return (
       <View
         style={[styles.container, style]}

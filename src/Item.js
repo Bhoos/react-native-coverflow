@@ -1,12 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { Animated, TouchableWithoutFeedback, Text, View } from 'react-native';
-
-let  num = 0;
+import { Animated, TouchableWithoutFeedback, View } from 'react-native';
 
 class Item extends Component {
   static propTypes = {
     scroll: PropTypes.instanceOf(Animated.Value).isRequired,
-    count: PropTypes.number.isRequired,
     position: PropTypes.number.isRequired,
     children: PropTypes.element.isRequired,
     wingSpan: PropTypes.number.isRequired,
@@ -30,37 +27,40 @@ class Item extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return false;
+    // Only if the props are different
+    return nextProps.position !== this.props.position
+      || nextProps.rotation !== this.props.rotation
+      || nextProps.midRotation !== this.props.midRotation
+      || nextProps.perspective !== this.props.perspective
+      || nextProps.scaleDown !== this.props.scaleDown
+      || nextProps.scaleFurther !== this.props.scaleFurther
+      || nextProps.wingSpan !== this.props.wingSpan
+      || nextProps.spacing !== this.props.spacing
+      || nextProps.children.key !== this.props.children.key;
   }
 
   render() {
+    console.log('Rendering Item', this.props.position);
     const {
       scroll,
       position,
       rotation,
       midRotation,
       perspective,
-      count,
       scaleDown,
       scaleFurther,
       wingSpan,
       spacing,
       onSelect,
     } = this.props;
-    const extremeLeft = Math.min(position - 2, position - (count / 2));
-    const extremeRight = Math.max(position + 2, position + (count / 2));
-    // console.log(temp);
-    // temp.addListener((v) => {
-    //   console.log('Value is', v);
-    // });
 
     const style = {
       transform: [
         { perspective },
         {
           translateX: scroll.interpolate({
-            inputRange: [extremeLeft, position - 1, position, position + 1, extremeRight],
-            outputRange: [wingSpan, spacing, 0, -spacing, -wingSpan],
+            inputRange: [position - 2, position - 1, position, position + 1, position + 2],
+            outputRange: [spacing + wingSpan, spacing, 0, -spacing, -spacing - wingSpan],
           }),
         },
         {
@@ -92,8 +92,6 @@ class Item extends Component {
         }}
       >
         <TouchableWithoutFeedback
-          onPressIn={() => console.log('On press in')}
-          onPressOut={() => console.log('On Press out')}
           onPress={() => onSelect(position)}
         >
           <Animated.View style={style}>
