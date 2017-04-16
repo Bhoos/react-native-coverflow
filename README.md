@@ -28,6 +28,8 @@ class YourComponent extends Component {
 ```
 
 **Checkout the demo project**
+
+https://github.com/Bhoos/coverflow-demo
 > `$ git clone git@github.com:Bhoos/coverflow-demo.git`  
 > `$ cd coverflow-demo`  
 > `$ npm install`  
