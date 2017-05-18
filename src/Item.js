@@ -29,7 +29,7 @@ class Item extends Component {
   };
 
   static childContextTypes = {
-    animatedPosition: PropTypes.instanceOf(Animated.Value),
+    animatedPosition: PropTypes.instanceOf(Animated.Interpolation),
   };
 
   getChildContext() {
