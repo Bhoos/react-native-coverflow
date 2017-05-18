@@ -33,8 +33,12 @@ class Item extends Component {
   };
 
   getChildContext() {
+    const { scroll, position } = this.props;
     return {
-      animatedPosition: null,
+      animatedPosition: scroll.interpolate({
+        inputRange: [position - 2, position - 1, position, position + 1, position + 2],
+        outputRange: [-1, -1, 0, 1, 1],
+      }),
     };
   }
 
