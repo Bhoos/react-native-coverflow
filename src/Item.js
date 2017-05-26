@@ -52,7 +52,7 @@ class Item extends Component {
       || nextProps.scaleFurther !== this.props.scaleFurther
       || nextProps.wingSpan !== this.props.wingSpan
       || nextProps.spacing !== this.props.spacing
-      || nextProps.children.key !== this.props.children.key;
+      || nextProps.children !== this.props.children;
   }
 
   render() {
