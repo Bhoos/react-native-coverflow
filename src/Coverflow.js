@@ -1,5 +1,6 @@
-import React, { Component, PropTypes, Children } from 'react';
+import React, { Component, Children } from 'react';
 import { Animated, View, PanResponder, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import ViewPropTypes from 'react-native/Libraries/Components/View/ViewPropTypes';
 
 import {
