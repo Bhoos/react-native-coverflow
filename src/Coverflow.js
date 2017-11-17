@@ -1,7 +1,6 @@
 import React, { Component, Children } from 'react';
 import { Animated, View, PanResponder, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import ViewPropTypes from 'react-native/Libraries/Components/View/ViewPropTypes';
 
 import {
   SENSITIVITY_LOW,
@@ -25,7 +24,6 @@ const styles = StyleSheet.create({
 
 class Coverflow extends Component {
   static propTypes = {
-    style: ViewPropTypes.style,
     sensitivity: PropTypes.oneOf([SENSITIVITY_LOW, SENSITIVITY_NORMAL, SENSITIVITY_HIGH]),
     deceleration: PropTypes.oneOf([DECELERATION_NORMAL, DECELERATION_FAST]),
     initialSelection: PropTypes.number,
