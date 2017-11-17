@@ -10,7 +10,7 @@
   "scripts": {
     "build": "babel --out-dir lib --ignore __tests__ src --source-maps",
     "clean": "rimraf lib && mkdir lib",
-    "prepublish": "rimraf lib && babel --out-dir lib --ignore __tests__ src",
+    "prepare": "rimraf lib && babel --out-dir lib --ignore __tests__ src",
     "test": "jest"
   },
   "repository": {
