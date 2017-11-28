@@ -81,6 +81,7 @@ class Coverflow extends Component {
         Math.abs(gestureState.dx) > 10
       ),
       onPanResponderGrant: () => {
+        scrollX.stopAnimation();
         scrollX.extractOffset();
       },
       onPanResponderTerminationRequest: () => true,
