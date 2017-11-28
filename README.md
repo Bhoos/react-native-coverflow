@@ -12,7 +12,7 @@ or
 ```javascript
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import Coverflow from 'react-native-coverflow';
+import { Coverflow } from 'react-native-coverflow';
 
 class YourComponent extends Component {
   render() {
@@ -71,6 +71,3 @@ A scale factor for the card adjacent to the center.
 
 ### scaleFurther :number default 0.75
 A diminising scale factor for the card next to the adjacent card.
-
-
-
