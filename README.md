@@ -12,7 +12,7 @@ or
 ```javascript
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import { Coverflow } from 'react-native-coverflow';
+import Coverflow from 'react-native-coverflow';
 
 class YourComponent extends Component {
   render() {
