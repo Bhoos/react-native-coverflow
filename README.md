@@ -58,7 +58,7 @@ The number of pixels between the adjacent card and its next card.
 The angle in degrees at which the non centered cards needs to be rotated.
 
 ### midRotation :number default 50
-The angle at which the center card needs to rotate to during transition. 
+The angle at which the center card needs to rotate to during transition.
 Use this value to make sure that during the central card transition, the
 cards do not overlap.
 
@@ -71,3 +71,6 @@ A scale factor for the card adjacent to the center.
 
 ### scaleFurther :number default 0.75
 A diminising scale factor for the card next to the adjacent card.
+
+### disableInteraction :boolean default false
+Disable swipe and press interactions completely.

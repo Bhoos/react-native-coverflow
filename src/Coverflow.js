@@ -37,6 +37,7 @@ class Coverflow extends Component {
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
     onPress: PropTypes.func,
     onChange: PropTypes.func.isRequired,
+    disableInteraction: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -52,6 +53,7 @@ class Coverflow extends Component {
     scaleDown: 0.8,
     scaleFurther: 0.75,
     onPress: undefined,
+    disableInteraction: false,
   };
 
   constructor(props) {
@@ -78,7 +80,7 @@ class Coverflow extends Component {
       onMoveShouldSetPanResponder: (evt, gestureState) => (
         // Since we want to handle presses on individual items as well
         // Only start the pan responder when there is some movement
-        Math.abs(gestureState.dx) > 10
+        Math.abs(gestureState.dx) > 10 && !this.props.disableInteraction
       ),
       onPanResponderGrant: () => {
         scrollX.stopAnimation();
@@ -139,17 +141,19 @@ class Coverflow extends Component {
   }
 
   onScroll = ({ value }) => {
-    // Update the most recent value
-    this.scrollPos = value;
+    if (!this.props.disableInteraction) {
+      // Update the most recent value
+      this.scrollPos = value;
 
-    const count = this.state.children.length;
+      const count = this.state.children.length;
 
-    const newSelection = clamp(Math.round(value), 0, count - 1);
-    if (newSelection !== this.state.selection) {
-      this.setState({
-        selection: newSelection,
-        children: fixChildrenOrder(this.props, newSelection),
-      });
+      const newSelection = clamp(Math.round(value), 0, count - 1);
+      if (newSelection !== this.state.selection) {
+        this.setState({
+          selection: newSelection,
+          children: fixChildrenOrder(this.props, newSelection),
+        });
+      }
     }
   }
 
@@ -160,13 +164,15 @@ class Coverflow extends Component {
   }
 
   onSelect = (idx) => {
-    // Check if the current selection is "exactly" the same
-    if (idx === Math.round(this.scrollPos)) {
-      if (this.props.onPress) {
-        this.props.onPress(idx);
+    if (!this.props.disableInteraction) {
+      // Check if the current selection is "exactly" the same
+      if (idx === Math.round(this.scrollPos)) {
+        if (this.props.onPress) {
+          this.props.onPress(idx);
+        }
+      } else {
+        this.snapToPosition(idx);
       }
-    } else {
-      this.snapToPosition(idx);
     }
   }
 
