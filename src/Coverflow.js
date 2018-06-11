@@ -230,6 +230,7 @@ class Coverflow extends Component {
 
   render() {
     const {
+      disableInteraction,
       style,
       rotation,
       midRotation,
@@ -247,7 +248,7 @@ class Coverflow extends Component {
         style={[styles.container, style]}
         {...props}
         onLayout={this.onLayout}
-        {...this.panResponder.panHandlers}
+        {...(disableInteraction ? {} : this.panResponder.panHandlers)}
       >
         {children.map(this.renderItem)}
       </View>
