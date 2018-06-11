@@ -27,6 +27,7 @@ class Item extends Component {
     scaleDown: PropTypes.number.isRequired,
     scaleFurther: PropTypes.number.isRequired,
     onSelect: PropTypes.func.isRequired,
+    disableInteraction: PropTypes.bool
   };
 
   static childContextTypes = {
@@ -68,6 +69,7 @@ class Item extends Component {
       wingSpan,
       spacing,
       onSelect,
+      disableInteraction,
     } = this.props;
 
     const style = {
@@ -112,7 +114,7 @@ class Item extends Component {
 
     return (
       <View pointerEvents="box-none" style={styles.container}>
-        <TouchableWithoutFeedback onPress={() => onSelect(position)}>
+        <TouchableWithoutFeedback onPress={() => onSelect(position)} disabled={disableInteraction}>
           <Animated.View style={style}>
             {this.props.children}
           </Animated.View>

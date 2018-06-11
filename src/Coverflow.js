@@ -162,15 +162,13 @@ class Coverflow extends Component {
   }
 
   onSelect = (idx) => {
-    if (!this.props.disableInteraction) {
-      // Check if the current selection is "exactly" the same
-      if (idx === Math.round(this.scrollPos)) {
-        if (this.props.onPress) {
-          this.props.onPress(idx);
-        }
-      } else {
-        this.snapToPosition(idx);
+    // Check if the current selection is "exactly" the same
+    if (idx === Math.round(this.scrollPos)) {
+      if (this.props.onPress) {
+        this.props.onPress(idx);
       }
+    } else {
+      this.snapToPosition(idx);
     }
   }
 
@@ -203,6 +201,7 @@ class Coverflow extends Component {
       scaleFurther,
       spacing,
       wingSpan,
+      disableInteraction
     } = this.props;
     const count = Children.count(children);
 
@@ -220,6 +219,7 @@ class Coverflow extends Component {
         scaleDown={scaleDown}
         scaleFurther={scaleFurther}
         onSelect={this.onSelect}
+        disableInteraction={disableInteraction}
       >
         {item}
       </Item>
