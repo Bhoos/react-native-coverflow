@@ -80,7 +80,7 @@ class Coverflow extends Component {
       onMoveShouldSetPanResponder: (evt, gestureState) => (
         // Since we want to handle presses on individual items as well
         // Only start the pan responder when there is some movement
-        Math.abs(gestureState.dx) > 10 && !this.props.disableInteraction
+        Math.abs(gestureState.dx) > 10
       ),
       onPanResponderGrant: () => {
         scrollX.stopAnimation();
@@ -141,19 +141,17 @@ class Coverflow extends Component {
   }
 
   onScroll = ({ value }) => {
-    if (!this.props.disableInteraction) {
-      // Update the most recent value
-      this.scrollPos = value;
+    // Update the most recent value
+    this.scrollPos = value;
 
-      const count = this.state.children.length;
+    const count = this.state.children.length;
 
-      const newSelection = clamp(Math.round(value), 0, count - 1);
-      if (newSelection !== this.state.selection) {
-        this.setState({
-          selection: newSelection,
-          children: fixChildrenOrder(this.props, newSelection),
-        });
-      }
+    const newSelection = clamp(Math.round(value), 0, count - 1);
+    if (newSelection !== this.state.selection) {
+      this.setState({
+        selection: newSelection,
+        children: fixChildrenOrder(this.props, newSelection),
+      });
     }
   }
 
