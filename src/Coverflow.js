@@ -37,6 +37,7 @@ class Coverflow extends Component {
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
     onPress: PropTypes.func,
     onChange: PropTypes.func.isRequired,
+    disableInteraction: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -52,6 +53,7 @@ class Coverflow extends Component {
     scaleDown: 0.8,
     scaleFurther: 0.75,
     onPress: undefined,
+    disableInteraction: false,
   };
 
   constructor(props) {
@@ -199,6 +201,7 @@ class Coverflow extends Component {
       scaleFurther,
       spacing,
       wingSpan,
+      disableInteraction
     } = this.props;
     const count = Children.count(children);
 
@@ -216,6 +219,7 @@ class Coverflow extends Component {
         scaleDown={scaleDown}
         scaleFurther={scaleFurther}
         onSelect={this.onSelect}
+        disableInteraction={disableInteraction}
       >
         {item}
       </Item>
@@ -224,6 +228,7 @@ class Coverflow extends Component {
 
   render() {
     const {
+      disableInteraction,
       style,
       rotation,
       midRotation,
@@ -241,7 +246,7 @@ class Coverflow extends Component {
         style={[styles.container, style]}
         {...props}
         onLayout={this.onLayout}
-        {...this.panResponder.panHandlers}
+        {...(disableInteraction ? {} : this.panResponder.panHandlers)}
       >
         {children.map(this.renderItem)}
       </View>
