@@ -2,10 +2,10 @@
   "name": "react-native-coverflow",
   "version": "0.1.8",
   "description": "Coverflow component for React Native",
-  "main": "lib/Coverflow.js",
+  "main": "src/Coverflow.js",
   "files": [
     "docs",
-    "lib"
+    "src"
   ],
   "scripts": {
     "build": "babel --out-dir lib --ignore __tests__ src --source-maps",
