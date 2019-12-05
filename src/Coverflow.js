@@ -37,6 +37,7 @@ class Coverflow extends Component {
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
     onPress: PropTypes.func,
     onChange: PropTypes.func.isRequired,
+    vertical: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -52,6 +53,7 @@ class Coverflow extends Component {
     scaleDown: 0.8,
     scaleFurther: 0.75,
     onPress: undefined,
+    vertical: false,
   };
 
   constructor(props) {
@@ -78,7 +80,7 @@ class Coverflow extends Component {
       onMoveShouldSetPanResponder: (evt, gestureState) => (
         // Since we want to handle presses on individual items as well
         // Only start the pan responder when there is some movement
-        Math.abs(gestureState.dx) > 10
+        Math.abs(gestureState[this.props.vertical ? 'dy' : 'dx']) > 10
       ),
       onPanResponderGrant: () => {
         scrollX.stopAnimation();
@@ -86,7 +88,7 @@ class Coverflow extends Component {
       },
       onPanResponderTerminationRequest: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        scrollX.setValue(-(gestureState.dx / sensitivity));
+        scrollX.setValue(-(gestureState[this.props.vertical ? 'dy' : 'dx'] / sensitivity));
         // scrollX.setValue(offset - (gestureState.dx / sensitivity));
       },
       onPanResponderRelease: (evt, gestureState) => {
@@ -96,9 +98,9 @@ class Coverflow extends Component {
         const selection = Math.round(this.scrollPos);
 
         // Damp out the scroll with certain deceleration
-        if (selection > 0 && selection < count - 2 && Math.abs(gestureState.vx) > 1) {
-          const velocity = -Math.sign(gestureState.vx)
-                  * (clamp(Math.abs(gestureState.vx), 3, 5) / sensitivity);
+        if (selection > 0 && selection < count - 2 && Math.abs(gestureState[this.props.vertical ? 'vy' : 'vx']) > 1) {
+          const velocity = -Math.sign(gestureState[this.props.vertical ? 'vy' : 'vx'])
+                  * (clamp(Math.abs(gestureState[this.props.vertical ? 'vy' : 'vx']), 3, 5) / sensitivity);
           const deceleration = this.props.deceleration;
 
           Animated.decay(scrollX, {
@@ -199,6 +201,7 @@ class Coverflow extends Component {
       scaleFurther,
       spacing,
       wingSpan,
+      vertical,
     } = this.props;
     const count = Children.count(children);
 
@@ -216,6 +219,7 @@ class Coverflow extends Component {
         scaleDown={scaleDown}
         scaleFurther={scaleFurther}
         onSelect={this.onSelect}
+        vertical={vertical}
       >
         {item}
       </Item>

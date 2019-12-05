@@ -1,11 +1,11 @@
 {
   "name": "react-native-coverflow",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Coverflow component for React Native",
-  "main": "lib/Coverflow.js",
+  "main": "src/Coverflow.js",
   "files": [
     "docs",
-    "lib"
+    "src"
   ],
   "scripts": {
     "build": "babel --out-dir lib --ignore __tests__ src --source-maps",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bhoos/react-native-coverflow.git"
+    "url": "git+https://github.com/Demuzx/react-native-coverflow.git"
   },
   "author": "Ranjan Shrestha",
   "license": "MIT",
